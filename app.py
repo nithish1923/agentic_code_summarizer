@@ -1,3 +1,4 @@
+
 import streamlit as st
 import zipfile
 import tempfile
@@ -16,7 +17,31 @@ from xhtml2pdf import pisa
 
 st.set_page_config(page_title="Agentic Code Summary Assistant", layout="wide")
 
-# --- Sidebar Explanations ---
+# --- Custom CSS for fixed sidebar layout ---
+st.markdown("""
+    <style>
+        section[data-testid="stSidebar"] {
+            min-width: 320px;
+            max-width: 320px;
+            width: 320px;
+        }
+        .main .block-container {
+            padding-left: 2rem;
+            padding-right: 2rem;
+        }
+        textarea, .stTextInput, .stFileUploader {
+            width: 100% !important;
+        }
+        button[kind="download"] {
+            width: 100%;
+        }
+        .block-container > div {
+            padding-top: 1rem;
+        }
+    </style>
+""", unsafe_allow_html=True)
+
+# --- Sidebar Info ---
 with st.sidebar:
     st.markdown("## 🧠 Agentic Code Summary Assistant")
     st.markdown("### 📘 What is it?")
@@ -33,7 +58,7 @@ with st.sidebar:
     4. Download the result in PDF, HTML, or Markdown.
     """)
 
-# --- Center Panel ---
+# --- Main Panel ---
 st.markdown("<h1 style='text-align:center;'>🧠 Agentic Code Summary Assistant</h1>", unsafe_allow_html=True)
 
 st.markdown("#### 📥 Paste your code here")
@@ -44,7 +69,6 @@ uploaded_file = st.file_uploader("Upload .zip file with .py, .js, .java, or .cpp
 
 summaries = []
 
-# --- Process Pasted Code ---
 if pasted_code and not uploaded_file:
     with st.spinner("Processing pasted code..."):
         lang = detect_language("snippet.py")
@@ -54,7 +78,6 @@ if pasted_code and not uploaded_file:
         for file_name, lang, summary in summaries:
             st.markdown(f"### 🧠 {file_name} ({lang})\n\n{summary}", unsafe_allow_html=True)
 
-# --- Process Uploaded ZIP ---
 elif uploaded_file:
     with tempfile.TemporaryDirectory() as temp_dir:
         zip_path = os.path.join(temp_dir, uploaded_file.name)
@@ -76,7 +99,6 @@ elif uploaded_file:
             for file_name, lang, summary in summaries:
                 st.markdown(f"### 🧠 {file_name} ({lang})\n\n{summary}", unsafe_allow_html=True)
 
-# --- Export Options ---
 if (pasted_code or uploaded_file) and summaries:
     st.markdown("#### 📤 Export Summary")
     c1, c2, c3 = st.columns(3)
@@ -104,7 +126,6 @@ if (pasted_code or uploaded_file) and summaries:
             else:
                 st.error("❌ PDF generation failed.")
 
-# --- Footer ---
 st.markdown("""
 <hr style='margin-top:20px;'>
 <div style='text-align:center; font-size:0.85em; color:gray;'>ⓒ 2025 Nithish Kondapaka™ – All rights reserved</div>
