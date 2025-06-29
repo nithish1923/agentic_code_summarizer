@@ -1,4 +1,3 @@
-
 import streamlit as st
 import zipfile
 import tempfile
@@ -15,9 +14,10 @@ from engine_openai import (
 from markdown2 import markdown
 from xhtml2pdf import pisa
 
-st.set_page_config(page_title="Agentic Code Summary Assistant", layout="wide")
+# --- Page Configuration ---
+st.set_page_config(page_title="CodeWhisperer 🤖", layout="wide")
 
-# --- Custom CSS for fixed sidebar layout ---
+# --- Custom CSS ---
 st.markdown("""
     <style>
         section[data-testid="stSidebar"] {
@@ -43,32 +43,33 @@ st.markdown("""
 
 # --- Sidebar Info ---
 with st.sidebar:
-    st.markdown("## 🤖 Agentic Code Summary Assistant")
+    st.markdown("## 🤖 CodeWhisperer")
     st.markdown("### 📘 What is it?")
     st.write("An intelligent summarization tool powered by GPT-4o to analyze and explain source code from various languages like Python, Java, JavaScript, and C++.")
 
     st.markdown("### 🛠️ Why this Tool")
-    st.write("Manual documentation is time-consuming. This assistant automates summarization, usage examples, and confidence scoring — reducing engineering overhead.")
+    st.write("Manual documentation is time-consuming. CodeWhisperer automates summarization, usage examples, and confidence scoring — reducing engineering overhead.")
 
     st.markdown("### ⚙️ How it Works")
     st.markdown("""
-    1. Paste code or upload source files (.py, .js, .java, .cpp) or a zip archive.  
-    2. The assistant detects language and uses a language-specific GPT-4o prompt.  
+    1. Paste code or upload your codebase (.py, .js, .java, .cpp) or a zip archive.  
+    2. CodeWhisperer detects the language and uses a smart GPT-4o prompt.  
     3. It generates summaries, usage examples, and confidence scores.  
     4. Download the result in PDF, HTML, or Markdown.
     """)
 
 # --- Main Panel ---
-st.markdown("<h1 style='text-align:center;'>🤖 Agentic Code Summary Assistant</h1>", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align:center;'>🤖 CodeWhisperer</h1>", unsafe_allow_html=True)
 
-st.markdown("#### 📥 Paste your code here")
+st.markdown("#### 📥 Paste Code Snippet")
 pasted_code = st.text_area("", height=200, placeholder="Paste any supported code snippet here (Python, Java, JS, C++)")
 
-st.markdown("#### 📁 Or upload files")
-uploaded_file = st.file_uploader("Upload .zip file with .py, .js, .java, or .cpp files", type=["zip"])
+st.markdown("#### 📁 Upload CodeBase")
+uploaded_file = st.file_uploader("Upload .zip file containing your codebase (.py, .js, .java, .cpp)", type=["zip"])
 
 summaries = []
 
+# --- If Code is Pasted ---
 if pasted_code and not uploaded_file:
     with st.spinner("Processing pasted code..."):
         lang = detect_language("snippet.py")
@@ -78,6 +79,7 @@ if pasted_code and not uploaded_file:
         for file_name, lang, summary in summaries:
             st.markdown(f"### 🧠 {file_name} ({lang})\n\n{summary}", unsafe_allow_html=True)
 
+# --- If ZIP Codebase is Uploaded ---
 elif uploaded_file:
     with tempfile.TemporaryDirectory() as temp_dir:
         zip_path = os.path.join(temp_dir, uploaded_file.name)
@@ -94,28 +96,32 @@ elif uploaded_file:
             st.error("❌ ZIP file is corrupted or incomplete. Please re-upload a valid .zip file.")
             st.stop()
 
-        with st.spinner("Processing uploaded zip..."):
+        with st.spinner("Processing uploaded CodeBase..."):
             summaries = generate_all_summaries(temp_dir)
             for file_name, lang, summary in summaries:
                 st.markdown(f"### 🧠 {file_name} ({lang})\n\n{summary}", unsafe_allow_html=True)
 
+# --- Export Section ---
 if (pasted_code or uploaded_file) and summaries:
     st.markdown("#### 📤 Export Summary")
     c1, c2, c3 = st.columns(3)
 
     with tempfile.TemporaryDirectory() as temp_dir:
+        # HTML Export
         with c1:
             html_path = os.path.join(temp_dir, "summary_output.html")
             save_summary_as_html(summaries, html_path)
             with open(html_path, "rb") as f:
                 st.download_button("💾 HTML", f, file_name="code_summary.html", mime="text/html")
 
+        # Markdown Export
         with c2:
             md_path = os.path.join(temp_dir, "summary_output.md")
             save_summary_as_markdown(summaries, md_path)
             with open(md_path, "rb") as f:
                 st.download_button("📝 Markdown", f, file_name="code_summary.md", mime="text/markdown")
 
+        # PDF Export
         with c3:
             html_string = markdown("".join([f"## {file}\n\n{summary}" for file, _, summary in summaries]))
             pdf_file = BytesIO()
@@ -126,6 +132,7 @@ if (pasted_code or uploaded_file) and summaries:
             else:
                 st.error("❌ PDF generation failed.")
 
+# --- Footer ---
 st.markdown("""
 <hr style='margin-top:20px;'>
 <div style='text-align:center; font-size:0.85em; color:gray;'>ⓒ 2025 Nithish Kondapaka™ – All rights reserved</div>
