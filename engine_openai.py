@@ -1,67 +1,72 @@
 import os
-from openai import OpenAI
-import markdown
+import openai
 
-# Initialize OpenAI client using API key from environment
-client = OpenAI()
+# Initialize OpenAI client (compatible with openai>=1.0.0)
+client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-def prompt_summary(code):
-    return f"""You are an expert code reviewer. Summarize the following Python code:
-1. Purpose
-2. Parameters
-3. Return values
-4. Usage notes
+# Language detection
+def detect_language(code: str, filename: str) -> str:
+    if filename.endswith(".py"):
+        return "Python"
+    elif filename.endswith(".js"):
+        return "JavaScript"
+    elif filename.endswith(".java"):
+        return "Java"
+    elif filename.endswith(".cpp"):
+        return "C++"
+    return "Unknown"
 
-python
-{code}
-"""
+# Prompt generator
+def generate_prompt(code: str, language: str) -> str:
+    base = f"You are an expert code reviewer. Summarize the following {language} code with:\n" \
+           "- Purpose of the module/file\n" \
+           "- Key functions/classes with parameters and return values\n" \
+           "- Usage notes or examples\n" \
+           "- Confidence score (0-100%)\n\nCode:\n{language.lower()}\n{code}\n"
 
-def prompt_example(code):
-    return f"""Generate a realistic Python usage example for the following function or class:
+    return base
 
-python
-{code}
-"""
-
-def prompt_confidence(code, summary):
-    return f"""Evaluate this summary for the code and respond with a confidence score (0 to 100):
-
-Code:
-```python
-{code}
-
-Summary: {summary} """
-
-def ask_gpt(prompt):
+# Ask GPT
+def ask_gpt(prompt: str) -> str:
     response = client.chat.completions.create(
         model="gpt-4o",
         messages=[{"role": "user", "content": prompt}],
         temperature=0
     )
-    return response.choices[0].message.content.strip()
+    return response.choices[0].message.content
 
-def generate_all_summaries(folder_path):
+# Core summarization engine
+def generate_all_summaries(input_data, from_text=False):
     summaries = []
-    for root, _, files in os.walk(folder_path):
-        for file in files:
-            if file.endswith(".py"):
-                with open(os.path.join(root, file), "r", encoding="utf-8") as f:
-                    code = f.read()
-                    summary = ask_gpt(prompt_summary(code))
-                    example = ask_gpt(prompt_example(code))
-                    confidence = ask_gpt(prompt_confidence(code, summary))
-                    section = f"## {file}\n\n" \
-                              f"### Summary\n{summary}\n\n" \
-                              f"### Usage Example\n{example}\n\n" \
-                              f"### Confidence Score\n{confidence}/100\n\n"
-                    summaries.append(section)
+
+    if from_text:
+        lang = detect_language(input_data, "snippet.py")
+        prompt = generate_prompt(input_data, lang)
+        summary = ask_gpt(prompt)
+        summaries.append(f"### 🧠 {lang} Code Summary\n\n{summary}")
+    else:
+        for root, _, files in os.walk(input_data):
+            for file in files:
+                if file.endswith((".py", ".js", ".java", ".cpp")):
+                    path = os.path.join(root, file)
+                    with open(path, "r", encoding="utf-8", errors="ignore") as f:
+                        code = f.read()
+                    lang = detect_language(code, file)
+                    prompt = generate_prompt(code, lang)
+                    summary = ask_gpt(prompt)
+                    summaries.append(f"### 🧠 {file} ({lang})\n\n{summary}")
     return summaries
 
-def save_summary_as_html(summaries, output_path):
-    html = markdown.markdown("".join(summaries))
-    with open(output_path, "w", encoding="utf-8") as f:
-        f.write(html)
+# Save as HTML
+def save_summary_as_html(summaries, file_path):
+    with open(file_path, "w", encoding="utf-8") as f:
+        f.write("<html><body>")
+        for s in summaries:
+            f.write(f"<div>{s}</div><hr>")
+        f.write("</body></html>")
 
-def save_summary_as_markdown(summaries, output_path):
-    with open(output_path, "w", encoding="utf-8") as f:
-        f.write("".join(summaries))
+# Save as Markdown
+def save_summary_as_markdown(summaries, file_path):
+    with open(file_path, "w", encoding="utf-8") as f:
+        for s in summaries:
+            f.write(f"{s}\n\n---\n")
