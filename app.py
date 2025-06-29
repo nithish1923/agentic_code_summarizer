@@ -7,33 +7,29 @@ from engine_openai import generate_all_summaries, save_summary_as_html, save_sum
 from markdown2 import markdown
 from xhtml2pdf import pisa
 
-st.set_page_config(page_title="📘 Code Summary Assistant", layout="centered")
+st.set_page_config(page_title="Code Summary Assistant", layout="wide")
+st.markdown("<h2 style='text-align:center;'>📘 Code Summary Assistant</h2>", unsafe_allow_html=True)
 
-st.markdown("<h1 style='text-align:center;'>📘 Code Summary Assistant</h1>", unsafe_allow_html=True)
+col1, col2 = st.columns([2, 1])
 
-st.markdown("""
-### 🧠 What is a Code Summary Assistant?
-A GPT-4o powered tool that reads Python code and generates intelligent summaries, usage examples, and confidence scores.
+with col1:
+    st.markdown("#### 🤖 About")
+    st.markdown("- Generate intelligent summaries from Python code using GPT-4o")
+    st.markdown("- Includes usage examples and self-review scores")
+    st.markdown("- Export summaries as PDF, Markdown, or HTML")
 
----
+    with st.expander("📘 How it works", expanded=False):
+        st.markdown("""
+        1. Upload a .zip of .py files  
+        2. GPT-4o analyzes each file  
+        3. Generates:
+           - Summary  
+           - Usage Example  
+           - Confidence Score  
+        """)
 
-### 🛠️ Why This Tool?
-Developers often struggle with undocumented or legacy code. This assistant helps by auto-documenting your codebase.
-
----
-
-### ⚙️ How It Works:
-1. Upload a .zip of .py files  
-2. GPT-4o will:
-    - 🔍 Analyze each file  
-    - ✍️ Generate summaries & examples  
-    - 📊 Add confidence score  
-3. Export the output in *PDF / Markdown / HTML*
-
----
-""")
-
-uploaded_file = st.file_uploader("📥 Upload your Python Codebase (.zip)", type=["zip"], label_visibility="visible")
+with col2:
+    uploaded_file = st.file_uploader("📥 Upload .zip of Python files", type=["zip"])
 
 if uploaded_file:
     with tempfile.TemporaryDirectory() as temp_dir:
@@ -44,44 +40,38 @@ if uploaded_file:
         with zipfile.ZipFile(zip_path, 'r') as zip_ref:
             zip_ref.extractall(temp_dir)
 
-        st.info("⏳ Analyzing uploaded code...")
+        st.success("✅ Code uploaded and processing...")
         summaries = generate_all_summaries(temp_dir)
-        st.success("✅ Summary generation complete!")
+        st.info("✅ Summaries generated below")
 
         for section in summaries:
             st.markdown(section, unsafe_allow_html=True)
 
-        st.markdown("### 📤 Export Options:")
-        col1, col2, col3 = st.columns(3)
+        st.markdown("#### 📤 Export Summary")
 
-        with col1:
-            if st.button("💾 HTML"):
-                html_path = os.path.join(temp_dir, "summary_output.html")
-                save_summary_as_html(summaries, html_path)
-                with open(html_path, "rb") as f:
-                    st.download_button("Download HTML", f, file_name="code_summary.html", mime="text/html")
+        export1, export2, export3 = st.columns(3)
 
-        with col2:
-            if st.button("📝 Markdown"):
-                md_path = os.path.join(temp_dir, "summary_output.md")
-                save_summary_as_markdown(summaries, md_path)
-                with open(md_path, "rb") as f:
-                    st.download_button("Download Markdown", f, file_name="code_summary.md", mime="text/markdown")
+        with export1:
+            html_path = os.path.join(temp_dir, "summary_output.html")
+            save_summary_as_html(summaries, html_path)
+            with open(html_path, "rb") as f:
+                st.download_button("💾 HTML", f, file_name="code_summary.html", mime="text/html")
 
-        with col3:
-            if st.button("📄 PDF"):
-                html_string = markdown("".join(summaries))
-                pdf_file = BytesIO()
-                pisa_status = pisa.CreatePDF(src=html_string, dest=pdf_file)
-                if not pisa_status.err:
-                    pdf_file.seek(0)
-                    st.download_button("Download PDF", pdf_file, file_name="code_summary.pdf", mime="application/pdf")
-                else:
-                    st.error("❌ PDF generation failed.")
+        with export2:
+            md_path = os.path.join(temp_dir, "summary_output.md")
+            save_summary_as_markdown(summaries, md_path)
+            with open(md_path, "rb") as f:
+                st.download_button("📝 Markdown", f, file_name="code_summary.md", mime="text/markdown")
 
-        st.markdown("""
-        <hr>
-        <div style='text-align:center; font-size:0.85em; color:gray;'>
-            ⓒ 2025 Nithish Kondapaka™ – All rights reserved
-        </div>
-        """, unsafe_allow_html=True)
+        with export3:
+            html_string = markdown("".join(summaries))
+            pdf_file = BytesIO()
+            pisa_status = pisa.CreatePDF(src=html_string, dest=pdf_file)
+            if not pisa_status.err:
+                pdf_file.seek(0)
+                st.download_button("📄 PDF", pdf_file, file_name="code_summary.pdf", mime="application/pdf")
+            else:
+                st.error("❌ PDF generation failed.")
+
+st.markdown("<hr style='margin-top:20px;'>", unsafe_allow_html=True)
+st.markdown("<div style='text-align:center; font-size:0.85em; color:gray;'>ⓒ 2025 Nithish Kondapaka™ – All rights reserved</div>", unsafe_allow_html=True)
