@@ -7,13 +7,14 @@ from engine_openai import (
     generate_all_summaries,
     save_summary_as_html,
     save_summary_as_markdown,
+    prompt_summary,
     detect_language,
-    generate_prompt,
-    ask_gpt,
+    ask_gpt
 )
 from markdown2 import markdown
 from xhtml2pdf import pisa
 
+# Set page config
 st.set_page_config(page_title="Agentic Code Summary Assistant", layout="wide")
 
 # Title
@@ -21,7 +22,7 @@ st.markdown("""
 <h1 style='text-align:center;'>🧠 Agentic Code Summary Assistant</h1>
 """, unsafe_allow_html=True)
 
-# Layout
+# Layout columns
 left, right = st.columns([2, 3])
 
 # LEFT SIDE: Explanations
@@ -46,7 +47,7 @@ with left:
     4. Download the result in PDF, HTML, or Markdown.
     """)
 
-# RIGHT SIDE: Inputs
+# RIGHT SIDE: Input form
 with right:
     st.markdown("#### 📥 Paste your code here")
     pasted_code = st.text_area(
@@ -56,7 +57,8 @@ with right:
 
     st.markdown("#### 📁 Or upload files")
     uploaded_file = st.file_uploader(
-        "Upload .zip file with .py, .js, .java, or .cpp files", type=["zip"]
+        "Upload .zip file with .py, .js, .java, or .cpp files",
+        type=["zip"]
     )
 
 summaries = []
@@ -64,14 +66,16 @@ summaries = []
 # Handle pasted code
 if pasted_code and not uploaded_file:
     with st.spinner("Processing pasted code..."):
+        lang = detect_language("snippet.py")  # ⛔ ERROR: This should take content, not filename
+        # 🔧 Fix: pass content instead of "snippet.py"
         lang = detect_language(pasted_code, "snippet.py")
-        prompt = generate_prompt(pasted_code, lang)
+        prompt = prompt_summary(pasted_code, lang)
         summary = ask_gpt(prompt)
         summaries.append(f"### 🧠 {lang} Code Summary\n\n{summary}")
         for section in summaries:
             st.markdown(section, unsafe_allow_html=True)
 
-# Handle uploaded zip
+# Handle ZIP upload
 elif uploaded_file:
     with tempfile.TemporaryDirectory() as temp_dir:
         zip_path = os.path.join(temp_dir, uploaded_file.name)
@@ -89,9 +93,10 @@ elif uploaded_file:
             st.stop()
 
         with st.spinner("Processing uploaded zip..."):
-            summaries = generate_all_summaries(temp_dir)
-            for section in summaries:
-                st.markdown(section, unsafe_allow_html=True)
+            summaries_raw = generate_all_summaries(temp_dir)
+            for file_name, lang, summary in summaries_raw:
+                summaries.append(f"### 🧠 {file_name} ({lang})\n\n{summary}")
+                st.markdown(summaries[-1], unsafe_allow_html=True)
 
 # Export options
 if (pasted_code or uploaded_file) and summaries:
@@ -99,21 +104,21 @@ if (pasted_code or uploaded_file) and summaries:
     c1, c2, c3 = st.columns(3)
 
     with tempfile.TemporaryDirectory() as temp_dir:
-        # HTML
+        # HTML Export
         with c1:
             html_path = os.path.join(temp_dir, "summary_output.html")
             save_summary_as_html(summaries, html_path)
             with open(html_path, "rb") as f:
                 st.download_button("💾 HTML", f, file_name="code_summary.html", mime="text/html")
 
-        # Markdown
+        # Markdown Export
         with c2:
             md_path = os.path.join(temp_dir, "summary_output.md")
             save_summary_as_markdown(summaries, md_path)
             with open(md_path, "rb") as f:
                 st.download_button("📝 Markdown", f, file_name="code_summary.md", mime="text/markdown")
 
-        # PDF
+        # PDF Export
         with c3:
             html_string = markdown("".join(summaries))
             pdf_file = BytesIO()
