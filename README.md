@@ -1,80 +1,231 @@
-# 🧠 CodeSummarAI – Agentic Code Summarizer Assistant
 
-An intelligent Streamlit-based AI assistant that analyzes and summarizes source code using OpenAI's GPT-4o. Supports multi-language code inputs, smart summaries, usage examples, and exportable outputs in PDF, HTML, and Markdown.
+# 🤖 CodeWhisperer – AI-Powered Code Summarizer Assistant
+
+**CodeWhisperer** is an intelligent Streamlit-based AI assistant that analyzes and summarizes source code using OpenAI's GPT-4o. It supports multiple programming languages, provides smart summaries, usage examples, and lets you export results in PDF, HTML, and Markdown formats.
 
 ---
 
 ## 🚀 Features
 
-- 🧠 AI-powered code summarization using GPT-4o
-- 📥 Accepts code via direct paste or `.zip` uploads
-- 🌐 Supports multiple languages: Python, JavaScript, Java, C++, etc.
+- 🧠 AI-powered code summarization using **GPT-4o**
+- 📥 Accepts input via:
+  - Direct code paste
+  - `.zip` uploads for full codebases
+- 🌐 Supports multiple languages:
+  - Python
+  - JavaScript
+  - Java
+  - C++
+  - And more
 - 📄 Generates summaries with:
-  - Purpose of the code
-  - Parameters
-  - Return values
+  - Code purpose
+  - Function/class descriptions
+  - Parameters and return values
   - Usage notes
-  - Realistic usage example
+  - Realistic usage examples
   - Confidence score
-- 📤 Export summaries as:
+- 📤 Export results as:
   - PDF
   - HTML
   - Markdown
-- 🎯 Built with modular components (`app.py` for UI, `engine_openai.py` for logic)
+- 🧩 Modular design:
+  - `app.py`: UI logic (Streamlit)
+  - `engine_openai.py`: AI prompt handling and summarization engine
 
 ---
 
 ## 🛠️ Setup Instructions
 
-### 1. Clone the repository
+### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/code-summarai.git
-cd code-summarai
-2. Create a virtual environment (optional but recommended)
+git clone https://github.com/your-username/codewhisperer.git
+cd codewhisperer
+2. Create a Virtual Environment (Recommended)
 bash
 Copy
 Edit
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
-3. Install dependencies
+3. Install Dependencies
 bash
 Copy
 Edit
 pip install -r requirements.txt
-4. Set your OpenAI API key
-For local dev, create a .streamlit/secrets.toml file:
+4. Set Your OpenAI API Key
+For Local Use:
+Create a file at .streamlit/secrets.toml with this content:
 
 toml
 Copy
 Edit
 OPENAI_API_KEY = "your-openai-key-here"
-For Streamlit Cloud, add this key in Settings → Secrets.
+For Streamlit Cloud:
+Go to Settings → Secrets, and add your API key there.
 
-🧪 Run the app locally
+🧪 Run the App Locally
 bash
 Copy
 Edit
 streamlit run app.py
 📁 Folder Structure
-graphql
+bash
 Copy
 Edit
-code-summarai/
+codewhisperer/
 ├── app.py                  # Streamlit UI
-├── engine_openai.py        # GPT prompt logic & file processing
-├── requirements.txt        # Python dependencies
+├── engine_openai.py        # GPT logic & summarization
+├── requirements.txt        # Dependencies
 └── .streamlit/
-    └── secrets.toml        # (Optional) API key for local testing
+    └── secrets.toml        # (Optional) Local API key
 📷 Demo
+(Add screenshots or a Streamlit Cloud demo link here if available)
 
+💡 Use Cases
+CodeWhisperer is ideal for:
 
-💡 Use Case
-This project demonstrates the capability of Agentic Gen AI to automate code understanding and generate comprehensive, consistent summaries — ideal for teams handling unfamiliar or legacy codebases.
+Understanding unfamiliar or legacy codebases
+
+Auto-generating documentation
+
+Teaching code behavior and best practices
+
+Saving time on manual summaries
 
 ✨ Contributions
-Pull requests welcome! For major changes, please open an issue first.
+Pull requests are welcome! For significant changes, open an issue to discuss your ideas first.
 
 📝 License
 © 2025 Nithish Kondapaka. All rights reserved.
 
+yaml
+Copy
+Edit
+
+---
+
+Let me know if you want me to:
+- Add badges (e.g. Python version, Streamlit link)
+- Insert example screenshots
+- Generate a logo or favicon for branding
+
+You're good to publish this on GitHub or Streamlit Cloud now 🚀
+
+
+
+
+
+
+
+You said:
+https://agenticcodesummarizer-rtfvo2mzhnhtypuoavniju.streamlit.app/Add Streamlight link here.
+
+
+ChatGPT said:
+Great! Here's your updated README.md with the Streamlit Cloud live app link added in two ideal spots:
+
+✅ Final README.md – with Live Demo Badge + Link
+markdown
+Copy
+Edit
+# 🤖 CodeWhisperer – AI-Powered Code Summarizer Assistant
+
+[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://agenticcodesummarizer-rtfvo2mzhnhtypuoavniju.streamlit.app/)
+
+**CodeWhisperer** is an intelligent Streamlit-based AI assistant that analyzes and summarizes source code using OpenAI's GPT-4o. It supports multiple programming languages, provides smart summaries, usage examples, and lets you export results in PDF, HTML, and Markdown formats.
+
+---
+
+## 🚀 Features
+
+- 🧠 AI-powered code summarization using **GPT-4o**
+- 📥 Accepts input via:
+  - Direct code paste
+  - `.zip` uploads for full codebases
+- 🌐 Supports multiple languages:
+  - Python
+  - JavaScript
+  - Java
+  - C++
+  - And more
+- 📄 Generates summaries with:
+  - Code purpose
+  - Function/class descriptions
+  - Parameters and return values
+  - Usage notes
+  - Realistic usage examples
+  - Confidence score
+- 📤 Export results as:
+  - PDF
+  - HTML
+  - Markdown
+- 🧩 Modular design:
+  - `app.py`: UI logic (Streamlit)
+  - `engine_openai.py`: AI prompt handling and summarization engine
+
+---
+
+## 🛠️ Setup Instructions
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/your-username/codewhisperer.git
+cd codewhisperer
+2. Create a Virtual Environment (Recommended)
+bash
+Copy
+Edit
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+3. Install Dependencies
+bash
+Copy
+Edit
+pip install -r requirements.txt
+4. Set Your OpenAI API Key
+For Local Use:
+Create a file at .streamlit/secrets.toml with this content:
+
+toml
+Copy
+Edit
+OPENAI_API_KEY = "your-openai-key-here"
+For Streamlit Cloud:
+Go to Settings → Secrets, and add your API key there.
+
+🧪 Run the App Locally
+bash
+Copy
+Edit
+streamlit run app.py
+📁 Folder Structure
+bash
+Copy
+Edit
+codewhisperer/
+├── app.py                  # Streamlit UI
+├── engine_openai.py        # GPT logic & summarization
+├── requirements.txt        # Dependencies
+└── .streamlit/
+    └── secrets.toml        # (Optional) Local API key
+📷 Live Demo
+🔗 Try it live on Streamlit Cloud:
+👉 CodeWhisperer Demo
+
+💡 Use Cases
+CodeWhisperer is ideal for:
+
+Understanding unfamiliar or legacy codebases
+
+Auto-generating documentation
+
+Teaching code behavior and best practices
+
+Saving time on manual summaries
+
+✨ Contributions
+Pull requests are welcome! For significant changes, open an issue to discuss your ideas first.
+
+📝 License
+© 2025 Nithish Kondapaka. All rights reserved.
