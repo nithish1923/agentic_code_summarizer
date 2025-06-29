@@ -1,4 +1,5 @@
 streamlit
-langchain
 openai
 markdown
+langchain==0.0.334
+tiktoken
