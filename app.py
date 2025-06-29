@@ -59,7 +59,7 @@ with st.sidebar:
     """)
 
 # --- Main Panel ---
-st.markdown("<h1 style='text-align:center;'>🧠 Agentic Code Summary Assistant</h1>", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align:center;'>🤖 Agentic Code Summary Assistant</h1>", unsafe_allow_html=True)
 
 st.markdown("#### 📥 Paste your code here")
 pasted_code = st.text_area("", height=200, placeholder="Paste any supported code snippet here (Python, Java, JS, C++)")
