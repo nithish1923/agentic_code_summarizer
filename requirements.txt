@@ -1,3 +1,4 @@
 streamlit
-openai==0.28
-markdown
+openai>=1.0.0
+markdown2
+xhtml2pdf
