@@ -21,8 +21,8 @@ st.set_page_config(page_title="Agentic Code Summary Assistant", layout="wide")
 st.markdown("""
     <style>
         section[data-testid="stSidebar"] {
-            min-width: 420px;
-            max-width: 420px;
+            min-width: 425px;
+            max-width: 425px;
             width: 320px;
         }
         .main .block-container {
