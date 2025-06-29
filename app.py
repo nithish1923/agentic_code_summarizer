@@ -7,7 +7,7 @@ import os
 from io import BytesIO
 # Import functions from our custom engines
 from engine_openai import generate_all_summaries, save_summary_as_html, save_summary_as_markdown
-from language_prompt_engine import detect_language # Only need detect_language here, generate_prompt_for_type is used internally by engine_openai
+from engine_openai import generate_all_summaries, save_summary_as_html, save_summary_as_markdown # Only need detect_language here, generate_prompt_for_type is used internally by engine_openai
 from markdown2 import markdown # Used for converting markdown to HTML for PDF generation
 from xhtml2pdf import pisa # Used for converting HTML to PDF
 
