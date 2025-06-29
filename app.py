@@ -4,10 +4,10 @@ import tempfile
 import os
 from engine_openai import generate_all_summaries, save_summary_as_html, save_summary_as_markdown
 
-st.set_page_config(page_title="Code Summarizer", layout="centered")
+st.set_page_config(page_title="Agentic GenAI – Code Summary Assistant", layout="centered")
 
 st.title("📘 Agentic GenAI – Code Summary Assistant")
-st.markdown("Generate OpenAI-powered summaries, examples, and confidence scores for your Python codebase.")
+st.markdown("Generate OpenAI-powered summaries, usage examples, and confidence scores for your Python codebase.")
 
 st.markdown("---")
 
