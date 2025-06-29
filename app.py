@@ -45,7 +45,7 @@ with right:
     st.markdown("#### 📥 Paste your code here")
     pasted_code = st.text_area("", height=200, placeholder="Paste any supported code snippet here (Python, Java, JS, C++)")
 
-    st.markdown("#### 📁 Or upload files")
+    st.markdown("#### 📁 Or upload Codebase")
     uploaded_file = st.file_uploader("Upload .zip file with .py, .js, .java, or .cpp files", type=["zip"])
 
 summaries = []
