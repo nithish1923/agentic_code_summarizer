@@ -7,40 +7,33 @@ from engine_openai import generate_all_summaries, save_summary_as_html, save_sum
 from markdown2 import markdown
 from xhtml2pdf import pisa
 
-st.set_page_config(page_title="📘 Agentic GenAI – Code Summary Assistant", layout="wide")
-st.title("📘 Agentic GenAI – Code Summary Assistant")
+st.set_page_config(page_title="📘 Code Summary Assistant", layout="centered")
 
-col_left, col_right = st.columns([1.3, 1])
+st.markdown("<h1 style='text-align:center;'>📘 Code Summary Assistant</h1>", unsafe_allow_html=True)
 
-with col_left:
-    st.markdown("""
-    ### 🤖 What is Agentic GenAI?
-    Agentic GenAI refers to autonomous generative AI that can reason, decide, and act on inputs.  
-    In this app, it reads your codebase and produces intelligent summaries using *GPT-4o*.
+st.markdown("""
+### 🧠 What is a Code Summary Assistant?
+A GPT-4o powered tool that reads Python code and generates intelligent summaries, usage examples, and confidence scores.
 
-    ---
+---
 
-    ### 🛠️ What This Tool Solves:
-    Developers waste hours interpreting messy or undocumented code.
+### 🛠️ Why This Tool?
+Developers often struggle with undocumented or legacy code. This assistant helps by auto-documenting your codebase.
 
-    This assistant automates:
-    - 🧠 Code summaries
-    - 💡 Usage examples
-    - 📊 Confidence scoring (self-review)
+---
 
-    ---
+### ⚙️ How It Works:
+1. Upload a .zip of .py files  
+2. GPT-4o will:
+    - 🔍 Analyze each file  
+    - ✍️ Generate summaries & examples  
+    - 📊 Add confidence score  
+3. Export the output in *PDF / Markdown / HTML*
 
-    ### ⚙️ How It Works:
-    1. Upload a .zip of your .py files.
-    2. GPT-4o analyzes each file and generates:
-        - Summary  
-        - Example  
-        - Score
-    3. You can export the results in HTML, Markdown, or PDF.
-    """)
+---
+""")
 
-with col_right:
-    uploaded_file = st.file_uploader("📦 Upload your Python Codebase (.zip):", type=["zip"])
+uploaded_file = st.file_uploader("📥 Upload your Python Codebase (.zip)", type=["zip"], label_visibility="visible")
 
 if uploaded_file:
     with tempfile.TemporaryDirectory() as temp_dir:
@@ -58,25 +51,25 @@ if uploaded_file:
         for section in summaries:
             st.markdown(section, unsafe_allow_html=True)
 
-        st.markdown("---")
+        st.markdown("### 📤 Export Options:")
         col1, col2, col3 = st.columns(3)
 
         with col1:
-            if st.button("💾 Export as HTML"):
+            if st.button("💾 HTML"):
                 html_path = os.path.join(temp_dir, "summary_output.html")
                 save_summary_as_html(summaries, html_path)
                 with open(html_path, "rb") as f:
                     st.download_button("Download HTML", f, file_name="code_summary.html", mime="text/html")
 
         with col2:
-            if st.button("📝 Export as Markdown"):
+            if st.button("📝 Markdown"):
                 md_path = os.path.join(temp_dir, "summary_output.md")
                 save_summary_as_markdown(summaries, md_path)
                 with open(md_path, "rb") as f:
                     st.download_button("Download Markdown", f, file_name="code_summary.md", mime="text/markdown")
 
         with col3:
-            if st.button("📄 Export as PDF"):
+            if st.button("📄 PDF"):
                 html_string = markdown("".join(summaries))
                 pdf_file = BytesIO()
                 pisa_status = pisa.CreatePDF(src=html_string, dest=pdf_file)
@@ -87,7 +80,8 @@ if uploaded_file:
                     st.error("❌ PDF generation failed.")
 
         st.markdown("""
-        <footer style='text-align:center; padding-top:2rem; font-size:0.85em; color:gray;'>
+        <hr>
+        <div style='text-align:center; font-size:0.85em; color:gray;'>
             ⓒ 2025 Nithish Kondapaka™ – All rights reserved
-        </footer>
+        </div>
         """, unsafe_allow_html=True)
