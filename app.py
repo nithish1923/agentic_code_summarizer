@@ -43,11 +43,11 @@ st.markdown("""
 
 # --- Sidebar Info ---
 with st.sidebar:
-    st.markdown("## 🧠 Agentic Code Summary Assistant")
+    st.markdown("## 🤖 Agentic Code Summary Assistant")
     st.markdown("### 📘 What is it?")
     st.write("An intelligent summarization tool powered by GPT-4o to analyze and explain source code from various languages like Python, Java, JavaScript, and C++.")
 
-    st.markdown("### 🤖 Why this Tool")
+    st.markdown("### 🛠️ Why this Tool")
     st.write("Manual documentation is time-consuming. This assistant automates summarization, usage examples, and confidence scoring — reducing engineering overhead.")
 
     st.markdown("### ⚙️ How it Works")
