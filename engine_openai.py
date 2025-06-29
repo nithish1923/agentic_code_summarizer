@@ -1,8 +1,8 @@
 import openai
 import os
 
-# Set OpenAI API Key from Streamlit secrets or environment variable
-openai.api_key = os.getenv("OPENAI_API_KEY") or os.getenv("openai_api_key")
+# Ensure the OpenAI API key is available
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 # Language-specific descriptions for prompting
 LANGUAGE_DESCRIPTIONS = {
@@ -62,12 +62,21 @@ def generate_all_summaries(temp_dir: str):
     for root, _, files in os.walk(temp_dir):
         for file_name in files:
             file_path = os.path.join(root, file_name)
+            ext = os.path.splitext(file_name)[1].lower()
+            if ext not in LANGUAGE_DESCRIPTIONS:
+                continue  # skip non-code files
             try:
-                with open(file_path, 'r', encoding='utf-8') as f:
-                    code = f.read()
+                try:
+                    with open(file_path, 'r', encoding='utf-8') as f:
+                        code = f.read()
+                except UnicodeDecodeError:
+                    with open(file_path, 'r', encoding='latin-1') as f:
+                        code = f.read()
+
                 language = detect_language(file_name)
                 prompt = prompt_summary(code, language)
                 summary = ask_gpt(prompt)
+
                 summaries.append((file_name, language, summary))
             except Exception as e:
                 summaries.append((file_name, "Unknown", f"⚠️ Error reading or summarizing this file: {e}"))
