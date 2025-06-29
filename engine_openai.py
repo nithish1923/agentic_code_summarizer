@@ -31,13 +31,36 @@ Code:
 
 Summary: {summary} """
 
-def ask_gpt(prompt): response = openai.ChatCompletion.create( model="gpt-4o", messages=[{"role": "user", "content": prompt}], temperature=0 ) return response.choices[0].message.content.strip()
+def ask_gpt(prompt):
+    response = openai.ChatCompletion.create(
+        model="gpt-4o",  # ✅ Correct model name
+        messages=[{"role": "user", "content": prompt}],
+        temperature=0
+    )
+    return response.choices[0].message.content.strip()
 
-def generate_all_summaries(folder_path): summaries = [] for root, _, files in os.walk(folder_path): for file in files: if file.endswith(".py"): with open(os.path.join(root, file), "r", encoding="utf-8") as f: code = f.read() summary = ask_gpt(prompt_summary(code)) example = ask_gpt(prompt_example(code)) confidence = ask_gpt(prompt_confidence(code, summary)) section = f"## {file}\n\n"
-f"### Summary\n{summary}\n\n"
-f"### Usage Example\n{example}\n\n"
-f"### Confidence Score\n{confidence}/100\n\n" summaries.append(section) return summaries
+def generate_all_summaries(folder_path):
+    summaries = []
+    for root, _, files in os.walk(folder_path):
+        for file in files:
+            if file.endswith(".py"):
+                with open(os.path.join(root, file), "r", encoding="utf-8") as f:
+                    code = f.read()
+                    summary = ask_gpt(prompt_summary(code))
+                    example = ask_gpt(prompt_example(code))
+                    confidence = ask_gpt(prompt_confidence(code, summary))
+                    section = f"## {file}\n\n" \
+                              f"### Summary\n{summary}\n\n" \
+                              f"### Usage Example\n{example}\n\n" \
+                              f"### Confidence Score\n{confidence}/100\n\n"
+                    summaries.append(section)
+    return summaries
 
-def save_summary_as_html(summaries, output_path): html = markdown.markdown("".join(summaries)) with open(output_path, "w", encoding="utf-8") as f: f.write(html)
+def save_summary_as_html(summaries, output_path):
+    html = markdown.markdown("".join(summaries))
+    with open(output_path, "w", encoding="utf-8") as f:
+        f.write(html)
 
-def save_summary_as_markdown(summaries, output_path): with open(output_path, "w", encoding="utf-8") as f: f.write("".join(summaries))
+def save_summary_as_markdown(summaries, output_path):
+    with open(output_path, "w", encoding="utf-8") as f:
+        f.write("".join(summaries))
