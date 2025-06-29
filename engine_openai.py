@@ -1,8 +1,9 @@
 import os
-import openai
+from openai import OpenAI
 import markdown
 
-openai.api_key = os.getenv("OPENAI_API_KEY")
+# Initialize OpenAI client using API key from environment
+client = OpenAI()
 
 def prompt_summary(code):
     return f"""You are an expert code reviewer. Summarize the following Python code:
@@ -32,8 +33,8 @@ Code:
 Summary: {summary} """
 
 def ask_gpt(prompt):
-    response = openai.ChatCompletion.create(
-        model="gpt-4o",  # ✅ Correct model name
+    response = client.chat.completions.create(
+        model="gpt-4o",
         messages=[{"role": "user", "content": prompt}],
         temperature=0
     )
