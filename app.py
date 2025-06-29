@@ -2,12 +2,34 @@ import streamlit as st
 import zipfile
 import tempfile
 import os
+from io import BytesIO
 from engine_openai import generate_all_summaries, save_summary_as_html, save_summary_as_markdown
+from markdown2 import markdown
+from xhtml2pdf import pisa
 
-st.set_page_config(page_title="Agentic GenAI – Code Summary Assistant", layout="centered")
-
+st.set_page_config(page_title="📘 Agentic GenAI – Code Summary Assistant", layout="centered")
 st.title("📘 Agentic GenAI – Code Summary Assistant")
-st.markdown("Generate OpenAI-powered summaries, usage examples, and confidence scores for your Python codebase.")
+
+# ℹ️ Intro Section
+with st.expander("ℹ️ About This Tool", expanded=True):
+    st.markdown("""
+    ### What is Agentic GenAI?
+    Agentic GenAI refers to autonomous generative AI that can reason, decide, and act based on inputs. In this app, it reads your codebase and produces intelligent summaries using GPT-4o.
+
+    ### What This Use Case Solves:
+    Developers often waste time interpreting legacy or undocumented code. This assistant automates:
+    - 🧠 Code summaries
+    - 💡 Usage examples
+    - 📊 Confidence scoring (self-review)
+
+    ### How It Works:
+    1. Upload a .zip of your .py files.
+    2. GPT-4o reads each file and generates:
+       - Summary
+       - Example
+       - Confidence score
+    3. Export results in .html, .md, or .pdf formats.
+    """)
 
 st.markdown("---")
 
@@ -31,7 +53,7 @@ if uploaded_file:
             st.markdown(section, unsafe_allow_html=True)
 
         st.markdown("---")
-        col1, col2 = st.columns(2)
+        col1, col2, col3 = st.columns(3)
 
         with col1:
             if st.button("💾 Export as HTML"):
@@ -47,4 +69,19 @@ if uploaded_file:
                 with open(md_path, "rb") as f:
                     st.download_button("Download Markdown", f, file_name="code_summary.md", mime="text/markdown")
 
-        st.markdown("<footer style='text-align:center; padding-top:2rem;'>ⓒ 2025 Nithish Kondapaka™ – All rights reserved</footer>", unsafe_allow_html=True)
+        with col3:
+            if st.button("📄 Export as PDF"):
+                html_string = markdown("".join(summaries))
+                pdf_file = BytesIO()
+                pisa_status = pisa.CreatePDF(src=html_string, dest=pdf_file)
+                if not pisa_status.err:
+                    pdf_file.seek(0)
+                    st.download_button("Download PDF", pdf_file, file_name="code_summary.pdf", mime="application/pdf")
+                else:
+                    st.error("❌ PDF generation failed.")
+
+        st.markdown("""
+        <footer style='text-align:center; padding-top:2rem; font-size:0.85em; color:gray;'>
+            ⓒ 2025 Nithish Kondapaka™ – All rights reserved
+        </footer>
+        """, unsafe_allow_html=True)
